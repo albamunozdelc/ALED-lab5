@@ -29,12 +29,6 @@ public class Patient extends Thread {
 	private Position2D position;
 	private Color color;
 
-	/**
-	 * Builds a new Patient.
-	 * 
-	 * @param numbre          The number of the Patient.
-	 * @param initialLocation The initial location of the Patient.
-	 */
 	public Patient(int number, Area initialLocation) {
 		this.number = number;
 		this.protocol = new ArrayList<Transfer>();
@@ -44,91 +38,42 @@ public class Patient extends Thread {
 		this.color = Color.GRAY; // Default color
 	}
 
-	/**
-	 * Returns the number of the Patient.
-	 * 
-	 * @return The number.
-	 */
 	public int getNumber() {
 		return number;
 	}
 
-	/**
-	 * Returns the protocol of the Patient.
-	 * 
-	 * @return The protocol.
-	 */
 	public List<Transfer> getProtocol() {
 		return protocol;
 	}
 
-	/**
-	 * Returns the current location of the Patient.
-	 * 
-	 * @return The current location.
-	 */
 	public Area getLocation() {
 		return location;
 	}
 
-	/**
-	 * Changes the current location of the Patient.
-	 * 
-	 * @param location The new location.
-	 */
 	public void setLocation(Area location) {
 		this.location = location;
 	}
-
-	/**
-	 * Returns the position of the Patient in the GUI.
-	 * 
-	 * @return The position.
-	 */
+	
 	public Position2D getPosition() {
 		return position;
 	}
 
-	/**
-	 * Changes the position of the Patient in the GUI.
-	 * 
-	 * @param position The new position.
-	 */
 	public void setPosition(Position2D position) {
 		this.position = position;
 	}
 
-	/**
-	 * Returns the color of Patient in the GUI.
-	 * 
-	 * @return The color.
-	 */
 	public Color getColor() {
 		return color;
 	}
 
-	/**
-	 * Changes the color of the Patient in the GUI.
-	 * 
-	 * @param color The new color.
-	 */
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
-	/**
-	 * Adds a new Transfer at the end of the Patient's protocol.
-	 * 
-	 * @param transfer The new Transfer.
-	 */
 	public void addToProtocol(Transfer transfer) {
 		this.protocol.add(transfer);
 	}
 
-	/**
-	 * Advances the Patient's protocol. The Patient is moved to the new Area, the
-	 * movement is animated by the GUI and the index is increased by one.
-	 */
 	private void advanceProtocol() {
 		Transfer transfer = protocol.get(indexProtocol);
 		indexProtocol++;
@@ -137,11 +82,6 @@ public class Patient extends Thread {
 		this.location = transfer.getTo();
 	}
 
-	/**
-	 * Simulates the treatment of the Patient at its current location. Therefore,
-	 * the Patient must spend at this method the amount of time specified in such
-	 * Area.
-	 */
 	private void attendedAtLocation() {
 		try {
 			System.out.println("Patient " + this.number + " is being attended at " + this.location);
@@ -152,19 +92,18 @@ public class Patient extends Thread {
 		}
 	}
 
-	/**
-	 * Executes the Patient's behavior. It follows their protocol by being attended
-	 * at the current location and then moving onto the next, until the last step of
-	 * the protocol is reached. At that point, the Patient is removed from the GUI.
-	 * 
-	 * It is important to note that: - Before being attended at a location, the
-	 * Patient must first enter it. If it's full, they will be kept waiting. - After
-	 * being attended at a location, the Patient must leave it. By doing this, the
-	 * Area knows that it must allow access to another Patient that was waiting.
-	 */
 	@Override
 	public void run() {
-		// TODO
+		location.enter(this);
+		attendedAtLocation();
+		location.exit(this);
+		
+		while(indexProtocol < protocol.size()) {
+			advanceProtocol();
+			this.location.enter(this);
+			attendedAtLocation();
+			this.location.exit(this);
+		}
+		EmergencyRoomGUI.getInstance().removePatient(this);
 	}
-
 }

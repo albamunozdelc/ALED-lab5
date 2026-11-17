@@ -28,9 +28,6 @@ public class Simulation {
 		}
 	}
 
-	/**
-	 * Simulates an emergency room from a provided file
-	 */
 	public Simulation(String file) throws FileNotFoundException {
 		// Initializes EmergencyRoom
 		this.er = new EmergencyRoom();
@@ -40,10 +37,7 @@ public class Simulation {
 		// Initializes the GUI
 		EmergencyRoomGUI.initialize(er);
 	}
-
-	/**
-	 * Starts all Patients and waits until all of them have been discharged.
-	 */
+	
 	public void start() {
 		System.out.println("Starting simulation... Admitting " + er.getPatients().size() + " patients.");
 		// Makes a copy of the patients and shuffle them to impose
@@ -54,6 +48,7 @@ public class Simulation {
 		for (Patient p : patientsList) {
 			er.admit(p);
 		}
+		
 		// Wait until all patient threads have finished
 		for (Patient p : patientsList) {
 			er.waitForDischarge(p);
