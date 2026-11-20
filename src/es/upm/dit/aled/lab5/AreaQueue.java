@@ -21,10 +21,10 @@ public class AreaQueue extends Area {
 	}
 	
 	@Override
-	public synchronized void enter(Patient p) {
+	public synchronized void enter(Patient pac) {
 		this.waiting++;
-		this.waitQueue.add(p);
-		while(numPatients >= capacity || this.waitQueue.peek() != p) {
+		this.waitQueue.add(pac);
+		while(numPatients >= capacity || this.waitQueue.peek() != pac) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
